@@ -23,7 +23,7 @@
           'build/outputs/apk/release/app-release-unsigned.apk',
           'build/outputs/apk/release/app-release-flavors1.apk'
    }
-   // 其他平台的大包文件脚本 ...
+   // 其他平台的打包文件脚本 ...
    ```
 
    依次定义的是 SignApk 路径、platform.x509.pem 路径、platform.pk8 路径、未签名包路径、签名包路径。
