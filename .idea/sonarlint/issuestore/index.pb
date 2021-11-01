@@ -3,8 +3,6 @@
 settings.gradle,0\5\05efc8b1657769a27696d478ded1e95f38737233
 >
 .gitlab-ci.yml,5\8\587d266bb27a4dc3022bbed44dfa19849df3044c
-9
-	README.md,8\e\8ec9a00bfd09b3190ac6b22251dbb1aa95a0579d
 c
 3app/src/main/kotlin/com/xzy/installer/AppContext.kt,8\3\83dfbd73ac80d1e9073e670e34f83c01107d3d57
 k
