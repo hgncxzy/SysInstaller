@@ -1,0 +1,6 @@
+include:
+    - project: 'DPA/sharing/autoscan-script'
+      ref: master
+      file: 'sonar-ci.yml'
+variables:
+    Language: "kotlin"

@@ -1,0 +1,150 @@
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-android-extensions'
+    id 'org.jlleitschuh.gradle.ktlint-idea'
+}
+
+android {
+    compileSdkVersion buildConfig.compileSdk
+    defaultConfig {
+        applicationId "com.xzy.installer"
+        minSdkVersion buildConfig.minSdk
+        targetSdkVersion buildConfig.targetSdk
+        versionCode buildConfig.version.code
+        versionName buildConfig.version.name
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        testInstrumentationRunnerArguments clearPackageData: 'true'
+        testInstrumentationRunnerArgument "size", "small"
+    }
+
+    compileOptions {
+        kotlinOptions.freeCompilerArgs += ['-module-name', "com.xzy.install"]
+    }
+
+    lintOptions {
+        // Turns off checks for the issue IDs you specify.
+        disable 'TypographyFractions', 'TypographyQuotes'
+        // Turns on checks for the issue IDs you specify. These checks are in
+        // addition to the default lint checks.
+        enable 'RtlHardcoded', 'RtlCompat', 'RtlEnabled'
+        // To enable checks for only a subset of issue IDs and ignore all others,
+        // list the issue IDs with the 'check' property instead. This property overrides
+        // any issue IDs you enable or disable using the properties above.
+        check 'NewApi', 'InlinedApi'
+        // If set to true, turns off analysis progress reporting by lint.
+        quiet true
+        // if set to true (default), stops the build if errors are found.
+        abortOnError false
+        // if true, only report errors.
+        ignoreWarnings true
+    }
+
+    testOptions {
+        execution 'ANDROIDX_TEST_ORCHESTRATOR'
+        unitTests {
+            includeAndroidResources = true
+        }
+    }
+
+    sourceSets {
+        main.java.srcDirs += 'src/main/kotlin'
+        test.java.srcDirs += 'src/test/kotlin'
+        androidTest.java.srcDirs += 'src/androidTest/kotlin'
+    }
+
+    packagingOptions {
+        exclude 'META-INF/DEPENDENCIES.txt'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/dependencies.txt'
+        exclude 'META-INF/LGPL2.1'
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            zipAlignEnabled false
+            shrinkResources false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    compileOptions {
+        encoding = "UTF-8"
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+
+    /*android.applicationVariants.all {
+        variant ->
+            variant.outputs.all {
+                outputFileName = "installer-"+ buildType.name + "-${defaultConfig.versionName}.apk"
+            }
+    }*/
+
+}
+
+task buildSignApk() {
+    dependsOn << build
+}
+
+//调用java中的main
+task signApk_flavors1(type: JavaExec) {
+    dependsOn << buildSignApk
+    classpath(files('script/signapk.jar'))
+    main 'com.android.signapk.SignApk'
+    args "script/_flavors1/platform.x509.pem",
+            "script/_flavors1/platform.pk8",
+            'build/outputs/apk/release/app-release-unsigned.apk',
+            'build/outputs/apk/release/app-release-flavors1.apk'
+}
+task signApk_flavors2(type: JavaExec) {
+    dependsOn << buildSignApk
+    classpath(files('script/signapk.jar'))
+    main 'com.android.signapk.SignApk'
+    args "script/_flavors2/platform.x509.pem",
+            "script/_flavors2/platform.pk8",
+            'build/outputs/apk/release/app-release-unsigned.apk',
+            'build/outputs/apk/release/app-release-flavors2.apk'
+}
+task signApk_flavors3(type: JavaExec) {
+    dependsOn << buildSignApk
+    classpath(files('script/signapk.jar'))
+    main 'com.android.signapk.SignApk'
+    args "script/_flavors3/platform.x509.pem",
+            "script/_flavors3/platform.pk8",
+            'build/outputs/apk/release/app-release-unsigned.apk',
+            'build/outputs/apk/release/app-release-flavors3.apk'
+}
+task signApk_flavors4(type: JavaExec) {
+    dependsOn << buildSignApk
+    classpath(files('script/signapk.jar'))
+    main 'com.android.signapk.SignApk'
+    args "script/_flavors4/platform.x509.pem",
+            "script/_flavors4/platform.pk8",
+            'build/outputs/apk/release/app-release-unsigned.apk',
+            'build/outputs/apk/release/app-release-flavors4.apk'
+}
+
+task signApk() {
+    dependsOn {
+        [
+                signApk_flavors1,
+                signApk_flavors2,
+                signApk_flavors3
+        ]
+    }
+}
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation deps.kotlin.stdlib
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+
+}
